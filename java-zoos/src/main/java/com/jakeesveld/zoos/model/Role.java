@@ -16,11 +16,15 @@ public class Role extends Auditable{
     @Column(nullable = false, unique = true)
     private String name;
 
-    @OneToMany(mappedBy = "role")
+    @OneToMany(mappedBy = "role", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JsonIgnoreProperties("role")
     private List<UserRoles> userRoles;
 
     public Role() {
+    }
+
+    public Role(String name) {
+        this.name = name;
     }
 
     public Role(String name, List<UserRoles> userRoles) {

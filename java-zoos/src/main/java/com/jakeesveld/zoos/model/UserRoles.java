@@ -7,7 +7,7 @@ import java.io.Serializable;
 import java.util.Objects;
 
 @Entity
-@Table(name = "userRoles")
+@Table(name = "userroles")
 public class UserRoles extends Auditable implements Serializable {
 
     @Id

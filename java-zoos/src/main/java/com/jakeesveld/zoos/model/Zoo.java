@@ -15,11 +15,11 @@ public class Zoo {
 
     private String zooname;
 
-    @OneToMany(mappedBy = "zoo")
+    @OneToMany(mappedBy = "zoo", fetch = FetchType.LAZY)
     @JsonIgnoreProperties("zoo")
     private List<Telephone> telephones = new ArrayList<>();
 
-    @ManyToMany
+    @ManyToMany(fetch = FetchType.LAZY)
     @JsonIgnoreProperties("zoos")
     @JoinTable(name = "zooanimals", joinColumns = {@JoinColumn(name = "zooid")}, inverseJoinColumns = {@JoinColumn(name = "animalid")})
     private List<Animal> animalList = new ArrayList<>();

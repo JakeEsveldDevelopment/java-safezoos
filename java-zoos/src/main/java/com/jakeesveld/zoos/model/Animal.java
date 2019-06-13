@@ -15,7 +15,7 @@ public class Animal {
 
     private String animaltype;
 
-    @ManyToMany(mappedBy = "animalList")
+    @ManyToMany(mappedBy = "animalList", fetch = FetchType.LAZY)
     @JsonIgnoreProperties("animalList")
     private List<Zoo> zoos = new ArrayList<>();
 

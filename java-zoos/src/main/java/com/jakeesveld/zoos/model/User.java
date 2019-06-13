@@ -2,6 +2,8 @@ package com.jakeesveld.zoos.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 import javax.persistence.*;
 import java.util.ArrayList;
@@ -20,7 +22,7 @@ public class User extends AuditingEntityListener {
     @Column(nullable = false)
     private String password;
 
-    @OneToMany(mappedBy = "user")
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JsonIgnoreProperties("user")
     private List<UserRoles> userRoles = new ArrayList<>();
 
@@ -33,8 +35,8 @@ public class User extends AuditingEntityListener {
     }
 
     public User(String username, String password, List<UserRoles> userRoles) {
-        this.username = username;
-        this.password = password;
+        setUsername(username);
+        setPassword(password);
         for(UserRoles role: userRoles){
             role.setUser(this);
         }
@@ -62,6 +64,11 @@ public class User extends AuditingEntityListener {
     }
 
     public void setPassword(String password) {
+        BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+        this.password = passwordEncoder.encode(password);
+    }
+
+    public void setPasswordNoEncrypt(String password){
         this.password = password;
     }
 
@@ -71,5 +78,16 @@ public class User extends AuditingEntityListener {
 
     public void setUserRoles(List<UserRoles> userRoles) {
         this.userRoles = userRoles;
+    }
+
+    public List<SimpleGrantedAuthority> getAuthority(){
+        List<SimpleGrantedAuthority> rtnList = new ArrayList<>();
+
+        for(UserRoles role: this.userRoles){
+            String myRole = "ROLE_" + role.getRole().getName().toUpperCase();
+            rtnList.add(new SimpleGrantedAuthority(myRole));
+        }
+
+        return rtnList;
     }
 }
